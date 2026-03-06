@@ -149,14 +149,23 @@ function MapView({ myList, toggleMyList, toggleFavorite }: { myList: MyListState
   });
 
   const resetPinchZoom = () => {
-    // Always force zoom to 1x when opening detail panel
-    const meta = document.querySelector('meta[name="viewport"]');
-    if (meta) {
-      meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-      setTimeout(() => {
-        meta.setAttribute('content', 'width=device-width, initial-scale=1.0');
-      }, 300);
-    }
+    // Force zoom reset: create a temporary focused input which iOS uses to reset viewport scale
+    const tmp = document.createElement('input');
+    tmp.setAttribute('type', 'text');
+    tmp.setAttribute('readonly', 'true');
+    tmp.style.position = 'fixed';
+    tmp.style.top = '0';
+    tmp.style.left = '0';
+    tmp.style.opacity = '0';
+    tmp.style.fontSize = '16px'; // prevent iOS auto-zoom on focus
+    tmp.style.width = '0';
+    tmp.style.height = '0';
+    document.body.appendChild(tmp);
+    tmp.focus();
+    setTimeout(() => {
+      tmp.blur();
+      document.body.removeChild(tmp);
+    }, 50);
   };
 
   const handleBoothClick = (booth: typeof boothData[number]) => {
@@ -529,7 +538,7 @@ function MapView({ myList, toggleMyList, toggleFavorite }: { myList: MyListState
                             }}
                             className="p-0.5"
                           >
-                            <Heart className={`w-4 h-4 transition-colors ${myList.favorites.has(`${selectedBrewery.boothNumber}:${sake.name}`) ? 'text-red-400 fill-red-400' : 'text-gray-300'}`} />
+                            <Check className={`w-4 h-4 transition-colors ${myList.favorites.has(`${selectedBrewery.boothNumber}:${sake.name}`) ? 'text-emerald-500' : 'text-gray-300'}`} />
                           </button>
                         </div>
                       </div>
@@ -698,7 +707,7 @@ function FavoritesView({ myList, toggleFavorite, updateMemo }: { myList: MyListS
                   <span className="text-xs text-gray-400">{item.boothInfo?.area}</span>
                   <div className="flex-1" />
                   <button onClick={() => toggleFavorite(item.key)} className="p-1">
-                    <Heart className="w-4 h-4 text-red-400 fill-red-400" />
+                    <Check className="w-4 h-4 text-emerald-500" />
                   </button>
                 </div>
                 <div className="flex items-center gap-2 mt-2 pl-10">
