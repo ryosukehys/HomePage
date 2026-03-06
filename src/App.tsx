@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
-import { Search, Map as MapIcon, List, X, Heart, Check, Settings, Trash2 } from 'lucide-react';
+import { Search, Map as MapIcon, List, X, Heart, Check, Settings, Trash2, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { boothData, sakeData, AppBrewery, AppSake } from './data';
 
@@ -740,14 +740,27 @@ function MapView({ myList, toggleMyList, toggleFavorite, updateMemo, resetToken,
                           </div>
                         </div>
                         {isFav && (
-                          <div className="mt-1.5 ml-[58px]">
+                          <div className="mt-1.5 ml-[58px] relative">
                             <textarea
-                              className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-700 resize-none focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 placeholder-gray-300"
+                              id={`memo-${sakeKey}`}
+                              className="w-full bg-gray-50 border border-gray-200 rounded-lg pl-3 pr-8 py-1.5 text-xs text-gray-700 resize-none focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 placeholder-gray-300"
                               placeholder="ひとくちメモ…"
                               rows={1}
                               defaultValue={myList.memos[sakeKey] || ''}
                               onBlur={(e) => updateMemo(sakeKey, e.target.value)}
                             />
+                            <button
+                              className="absolute right-1.5 top-1/2 -translate-y-1/2 p-0.5 text-gray-400 active:text-amber-500"
+                              onClick={() => {
+                                const el = document.getElementById(`memo-${sakeKey}`) as HTMLTextAreaElement | null;
+                                if (el) {
+                                  updateMemo(sakeKey, el.value);
+                                  el.blur();
+                                }
+                              }}
+                            >
+                              <Send className="w-3.5 h-3.5" />
+                            </button>
                           </div>
                         )}
                       </div>
