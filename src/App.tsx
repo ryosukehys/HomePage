@@ -925,6 +925,28 @@ export default function App() {
     return { want: new Set<string>(), went: new Set<string>(), favorites: new Set<string>(), memos: {} as Record<string, string> };
   });
 
+  useEffect(() => {
+    // Block browser-level pinch zoom so zoom behavior stays inside the custom map area only.
+    const preventGesture = (e: Event) => e.preventDefault();
+    const preventMultiTouchZoom = (e: TouchEvent) => {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener('gesturestart', preventGesture, { passive: false });
+    document.addEventListener('gesturechange', preventGesture, { passive: false });
+    document.addEventListener('gestureend', preventGesture, { passive: false });
+    document.addEventListener('touchmove', preventMultiTouchZoom, { passive: false });
+
+    return () => {
+      document.removeEventListener('gesturestart', preventGesture);
+      document.removeEventListener('gesturechange', preventGesture);
+      document.removeEventListener('gestureend', preventGesture);
+      document.removeEventListener('touchmove', preventMultiTouchZoom);
+    };
+  }, []);
+
   const saveMyList = (next: MyListState) => {
     localStorage.setItem('sakenojin-mylist', JSON.stringify({ want: Array.from(next.want), went: Array.from(next.went), favorites: Array.from(next.favorites), memos: next.memos }));
   };
