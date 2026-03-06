@@ -996,45 +996,62 @@ function SettingsView({ myList, clearMyList }: { myList: MyListState; clearMyLis
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 pb-24 space-y-3">
-        <div className="px-4 py-4 bg-white/70 rounded-xl text-gray-500 text-[11px] leading-relaxed space-y-3 border border-gray-200/60">
+        <div className="px-4 py-4 bg-white/70 rounded-xl text-gray-500 text-xs leading-relaxed space-y-3 border border-gray-200/60">
           <div>
-            <p className="font-bold text-gray-600 text-xs mb-2">📖 使い方</p>
+            <p className="font-bold text-gray-600 text-sm mb-2">📖 使い方</p>
             <div className="space-y-2.5">
               <div>
                 <p className="font-bold text-gray-600 mb-0.5">① 事前に気になる蔵を探す</p>
-                <ul className="space-y-0.5 list-disc list-inside">
+                <ul className="space-y-1 list-none pl-1">
                   <li>マップでブースをタップすると出品酒リストが表示されます。</li>
                   <li>上部のフィルタ（限定酒・有料試飲・種類・酒米）や検索で絞り込めます。検索はスペース区切りでAND検索できます。</li>
-                  <li>気になる蔵はブースを<span className="font-bold">長押し</span>して「行きたい！」に追加。マップ上にハートが付きます。</li>
-                  <li>出品酒リストで気になる銘柄のハート♡をタップすると、ピンクになり「飲みたい！」をマーク。各タブの銘柄一覧にも反映されます。</li>
+                  <li className="flex items-start gap-1">
+                    <Heart className="w-3.5 h-3.5 text-pink-500 fill-pink-500 shrink-0 mt-0.5" />
+                    <span>気になる蔵はブースを<span className="font-bold">長押し</span>して「行きたい！」に追加。マップ上に<Heart className="w-3 h-3 text-pink-500 fill-pink-500 inline -mt-0.5" />が付きます。</span>
+                  </li>
+                  <li className="flex items-start gap-1">
+                    <Heart className="w-3.5 h-3.5 text-pink-500 shrink-0 mt-0.5" />
+                    <span>出品酒リストで銘柄の<Heart className="w-3 h-3 text-pink-500 inline -mt-0.5" />をタップすると「飲みたい！」をマーク。各タブに反映されます。</span>
+                  </li>
                 </ul>
               </div>
               <div>
                 <p className="font-bold text-gray-600 mb-0.5">② 会場で巡回する</p>
-                <ul className="space-y-0.5 list-disc list-inside">
-                  <li>「行きたい！/行った！」タブで、行きたい蔵の一覧を確認できます。</li>
+                <ul className="space-y-1 list-none pl-1">
+                  <li className="flex items-start gap-1">
+                    <List className="w-3.5 h-3.5 text-gray-500 shrink-0 mt-0.5" />
+                    <span>「行きたい！/行った！」タブで、行きたい蔵の一覧を確認できます。</span>
+                  </li>
                   <li>蔵カードをタップするとマップに戻ってその蔵の詳細が開きます。</li>
-                  <li>蔵カード右のチェックで「行った！」をマーク。行った蔵はグレーになります。</li>
+                  <li className="flex items-start gap-1">
+                    <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                    <span>蔵カード右の<Check className="w-3 h-3 text-emerald-500 inline -mt-0.5" />で「行った！」をマーク。行った蔵はグレーになります。</span>
+                  </li>
                 </ul>
               </div>
               <div>
                 <p className="font-bold text-gray-600 mb-0.5">③ 飲んで記録する</p>
-                <ul className="space-y-0.5 list-disc list-inside">
-                  <li>出品酒リストのチェックをONにすると「飲んだ！」に追加されます。</li>
-                  <li>チェックONでその場にメモ欄が開くので、感想をすぐ書けます。</li>
-                  <li>メモの紙飛行機アイコンを押すとキーボードが閉じて保存されます。</li>
+                <ul className="space-y-1 list-none pl-1">
+                  <li className="flex items-start gap-1">
+                    <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                    <span>出品酒リストの<Check className="w-3 h-3 text-emerald-500 inline -mt-0.5" />をONにすると「飲んだ！」に追加され、メモ欄が開きます。</span>
+                  </li>
+                  <li className="flex items-start gap-1">
+                    <Send className="w-3.5 h-3.5 text-gray-400 shrink-0 mt-0.5" />
+                    <span>メモの<Send className="w-3 h-3 text-gray-400 inline -mt-0.5" />を押すとキーボードが閉じて保存されます。</span>
+                  </li>
                 </ul>
               </div>
               <div>
                 <p className="font-bold text-gray-600 mb-0.5">④ あとで振り返る</p>
-                <ul className="space-y-0.5 list-disc list-inside">
+                <ul className="space-y-1 list-none pl-1">
                   <li>「飲んだ！」タブで、飲んだ銘柄とメモの一覧を振り返れます。</li>
                 </ul>
               </div>
               <div>
                 <p className="font-bold text-gray-600 mb-0.5">💡 Tips</p>
-                <ul className="space-y-0.5 list-disc list-inside">
-                  <li>マップはピンチで拡大できます。タイトルタップで縮小に戻ります。</li>
+                <ul className="space-y-1 list-none pl-1">
+                  <li>マップはピンチで拡大できます。タイトルタップで等倍に戻ります。</li>
                   <li>Safariでうまく動作しないときはChromeで開いてみてください。</li>
                 </ul>
               </div>
