@@ -225,7 +225,8 @@ function MapView({ myList, toggleMyList, toggleFavorite }: { myList: MyListState
         e.preventDefault();
         suppressTapRef.current = true;
       }
-      setMapOffset({ x: gesture.startOffsetX + dx, y: gesture.startOffsetY + dy });
+      // Keep map vertical position fixed to avoid sliding under the filter area.
+      setMapOffset({ x: gesture.startOffsetX + dx, y: 0 });
     }
   };
 
