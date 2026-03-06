@@ -545,7 +545,7 @@ function MapView({ myList, toggleMyList, toggleFavorite, resetToken }: { myList:
                             <Check className="w-[70%] h-[70%] text-white" strokeWidth={3} />
                           </span>
                         )}
-                        <span className="text-center leading-none" style={{ fontSize: 'clamp(7px, 2.2vw, 11px)' }}>
+                        <span className="text-center leading-[0.92]" style={{ fontSize: 'clamp(8px, 2.8vw, 13px)' }}>
                           {isPlaceholder
                             ? <>{cell.brewery_name.includes('洗浄') ? '洗浄' : cell.brewery_name.substring(0, 2)}<br/>{cell.brewery_name.includes('洗浄') ? '' : cell.brewery_name.substring(2, 4)}</>
                             : <>{cell.brewery_name.substring(0, 2)}<br/>{cell.brewery_name.substring(2, 4)}</>
