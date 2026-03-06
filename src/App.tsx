@@ -344,7 +344,7 @@ function MapView({ myList, toggleMyList, toggleFavorite }: { myList: MyListState
                     >
                       {rowIndex % 2 === 0 && (
                         <span className="text-[10px] mb-0.5 text-center leading-tight truncate w-full text-gray-500 font-bold">
-                          {!isPlaceholder ? cell.booth_number : ''}
+                          {!isPlaceholder ? cell.booth_number : '\u00A0'}
                         </span>
                       )}
                       <div
@@ -359,7 +359,7 @@ function MapView({ myList, toggleMyList, toggleFavorite }: { myList: MyListState
                             <Check className="w-[70%] h-[70%] text-white" strokeWidth={3} />
                           </span>
                         )}
-                        <span className="text-center leading-none" style={{ fontSize: 'clamp(6px, 1.5vw, 10px)' }}>
+                        <span className="text-center leading-none" style={{ fontSize: 'clamp(7px, 2.2vw, 11px)' }}>
                           {isPlaceholder
                             ? <>{cell.brewery_name.includes('洗浄') ? '洗浄' : cell.brewery_name.substring(0, 2)}<br/>{cell.brewery_name.includes('洗浄') ? '' : cell.brewery_name.substring(2, 4)}</>
                             : <>{cell.brewery_name.substring(0, 2)}<br/>{cell.brewery_name.substring(2, 4)}</>
@@ -368,7 +368,7 @@ function MapView({ myList, toggleMyList, toggleFavorite }: { myList: MyListState
                       </div>
                       {rowIndex % 2 === 1 && (
                         <span className="text-[10px] mt-0.5 text-center leading-tight truncate w-full text-gray-500 font-bold">
-                          {!isPlaceholder ? cell.booth_number : ''}
+                          {!isPlaceholder ? cell.booth_number : '\u00A0'}
                         </span>
                       )}
                     </div></React.Fragment>
