@@ -36,6 +36,7 @@ function MapView({ myList, toggleMyList, toggleFavorite }: { myList: MyListState
   const [searchQuery, setSearchQuery] = useState('');
   const [mapScale, setMapScale] = useState(1);
   const [mapOffset, setMapOffset] = useState({ x: 0, y: 0 });
+  const mapViewportRef = useRef<HTMLDivElement | null>(null);
   const mapGestureRef = useRef<{
     mode: 'pan' | 'pinch';
     startX: number;
@@ -44,6 +45,8 @@ function MapView({ myList, toggleMyList, toggleFavorite }: { myList: MyListState
     startOffsetY: number;
     startDistance: number;
     startScale: number;
+    anchorX: number;
+    anchorY: number;
   } | null>(null);
   const suppressTapRef = useRef(false);
 
@@ -161,6 +164,17 @@ function MapView({ myList, toggleMyList, toggleFavorite }: { myList: MyListState
   });
 
   const clampScale = useCallback((value: number) => Math.min(3, Math.max(1, value)), []);
+  const clampOffset = useCallback((offset: { x: number; y: number }, scale: number) => {
+    const viewport = mapViewportRef.current;
+    if (!viewport || scale <= 1) return { x: 0, y: 0 };
+    const minX = viewport.clientWidth * (1 - scale);
+    const minY = viewport.clientHeight * (1 - scale);
+    return {
+      x: Math.max(minX, Math.min(0, offset.x)),
+      y: Math.max(minY, Math.min(0, offset.y)),
+    };
+  }, []);
+
   const resetMapZoom = useCallback(() => {
     setMapScale(1);
     setMapOffset({ x: 0, y: 0 });
@@ -178,9 +192,20 @@ function MapView({ myList, toggleMyList, toggleFavorite }: { myList: MyListState
     const dy = touches[0].clientY - touches[1].clientY;
     return Math.hypot(dx, dy);
   };
+  const getCenter = (touches: React.TouchList) => {
+    if (touches.length < 2) return { x: 0, y: 0 };
+    return {
+      x: (touches[0].clientX + touches[1].clientX) / 2,
+      y: (touches[0].clientY + touches[1].clientY) / 2,
+    };
+  };
 
   const handleMapTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     if (e.touches.length >= 2) {
+      const rect = mapViewportRef.current?.getBoundingClientRect();
+      const center = getCenter(e.touches);
+      const localX = center.x - (rect?.left ?? 0);
+      const localY = center.y - (rect?.top ?? 0);
       mapGestureRef.current = {
         mode: 'pinch',
         startX: 0,
@@ -189,6 +214,8 @@ function MapView({ myList, toggleMyList, toggleFavorite }: { myList: MyListState
         startOffsetY: mapOffset.y,
         startDistance: getDistance(e.touches),
         startScale: mapScale,
+        anchorX: (localX - mapOffset.x) / mapScale,
+        anchorY: (localY - mapOffset.y) / mapScale,
       };
       return;
     }
@@ -201,6 +228,8 @@ function MapView({ myList, toggleMyList, toggleFavorite }: { myList: MyListState
         startOffsetY: mapOffset.y,
         startDistance: 0,
         startScale: mapScale,
+        anchorX: 0,
+        anchorY: 0,
       };
     }
   };
@@ -214,7 +243,20 @@ function MapView({ myList, toggleMyList, toggleFavorite }: { myList: MyListState
       if (distance <= 0 || gesture.startDistance <= 0) return;
       e.preventDefault();
       suppressTapRef.current = true;
-      setMapScale(clampScale(gesture.startScale * (distance / gesture.startDistance)));
+      const rect = mapViewportRef.current?.getBoundingClientRect();
+      const center = getCenter(e.touches);
+      const localX = center.x - (rect?.left ?? 0);
+      const localY = center.y - (rect?.top ?? 0);
+      const nextScale = clampScale(gesture.startScale * (distance / gesture.startDistance));
+      const nextOffset = clampOffset(
+        {
+          x: localX - gesture.anchorX * nextScale,
+          y: localY - gesture.anchorY * nextScale,
+        },
+        nextScale
+      );
+      setMapScale(nextScale);
+      setMapOffset(nextOffset);
       return;
     }
 
@@ -225,13 +267,16 @@ function MapView({ myList, toggleMyList, toggleFavorite }: { myList: MyListState
         e.preventDefault();
         suppressTapRef.current = true;
       }
-      // Keep map vertical position fixed to avoid sliding under the filter area.
-      setMapOffset({ x: gesture.startOffsetX + dx, y: 0 });
+      setMapOffset(clampOffset({ x: gesture.startOffsetX + dx, y: gesture.startOffsetY + dy }, mapScale));
     }
   };
 
   const handleMapTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
     if (e.touches.length >= 2) {
+      const rect = mapViewportRef.current?.getBoundingClientRect();
+      const center = getCenter(e.touches);
+      const localX = center.x - (rect?.left ?? 0);
+      const localY = center.y - (rect?.top ?? 0);
       mapGestureRef.current = {
         mode: 'pinch',
         startX: 0,
@@ -240,6 +285,8 @@ function MapView({ myList, toggleMyList, toggleFavorite }: { myList: MyListState
         startOffsetY: mapOffset.y,
         startDistance: getDistance(e.touches),
         startScale: mapScale,
+        anchorX: (localX - mapOffset.x) / mapScale,
+        anchorY: (localY - mapOffset.y) / mapScale,
       };
       return;
     }
@@ -252,6 +299,8 @@ function MapView({ myList, toggleMyList, toggleFavorite }: { myList: MyListState
         startOffsetY: mapOffset.y,
         startDistance: 0,
         startScale: mapScale,
+        anchorX: 0,
+        anchorY: 0,
       };
       return;
     }
@@ -404,7 +453,8 @@ function MapView({ myList, toggleMyList, toggleFavorite }: { myList: MyListState
       {/* Grid (fixed viewport) */}
       <div className="px-2">
         <div
-          className="overflow-hidden rounded-xl border border-gray-200/80 bg-white/30 h-[40vh] min-h-[250px] max-h-[380px]"
+          ref={mapViewportRef}
+          className="overflow-hidden rounded-xl border border-gray-200/80 bg-white/30 h-[38vh] min-h-[235px] max-h-[360px]"
           onTouchStart={handleMapTouchStart}
           onTouchMove={handleMapTouchMove}
           onTouchEnd={handleMapTouchEnd}
