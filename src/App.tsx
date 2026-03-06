@@ -962,7 +962,7 @@ function SettingsView({ myList, clearMyList }: { myList: MyListState; clearMyLis
           </div>
           <div className="border-t border-gray-200 pt-3">
             <p className="font-bold text-gray-600 text-xs mb-1">🔒 プライバシー</p>
-            <p>本サイトはサーバーへの通信を一切行わない静的サイトです。「行きたい！」「飲んだ！」等のデータは、お使いのブラウザ内（localStorage）にのみ保存され、外部に送信されることはありません。ブラウザのデータを消去すると登録内容も消えます。記録を残したい場合はスクリーンショットの保存をおすすめします。</p>
+            <p>「行きたい！」「飲んだ！」等のデータは、お使いのブラウザ内（localStorage）にのみ保存されます。氏名・メールアドレスなどの個人情報は取得しません。改善目的で、設定が有効な場合のみ匿名アクセス解析（クッキーレス）を使用することがあります。</p>
           </div>
         </div>
         <p className="text-xs text-gray-500 px-1 mb-2">登録データのクリア</p>
@@ -1023,6 +1023,35 @@ export default function App() {
     } catch {}
     return { want: new Set<string>(), went: new Set<string>(), favorites: new Set<string>(), memos: {} as Record<string, string> };
   });
+
+  useEffect(() => {
+    const getMeta = (name: string) => document.querySelector<HTMLMetaElement>(`meta[name="${name}"]`)?.content?.trim() ?? '';
+    const provider = getMeta('analytics-provider');
+    if (!provider) return;
+    if (navigator.doNotTrack === '1') return;
+    if (document.querySelector('script[data-analytics-loader="true"]')) return;
+
+    const script = document.createElement('script');
+    script.defer = true;
+    script.setAttribute('data-analytics-loader', 'true');
+
+    if (provider === 'cloudflare') {
+      const token = getMeta('analytics-token');
+      if (!token) return;
+      script.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+      script.setAttribute('data-cf-beacon', JSON.stringify({ token }));
+      document.head.appendChild(script);
+      return;
+    }
+
+    if (provider === 'umami') {
+      const websiteId = getMeta('analytics-website-id');
+      if (!websiteId) return;
+      script.src = getMeta('analytics-src') || 'https://cloud.umami.is/script.js';
+      script.setAttribute('data-website-id', websiteId);
+      document.head.appendChild(script);
+    }
+  }, []);
 
   useEffect(() => {
     // Block browser-level pinch zoom so zoom behavior stays inside the custom map area only.
