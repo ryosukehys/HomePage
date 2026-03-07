@@ -748,7 +748,7 @@ function MapView({ myList, toggleMyList, toggleFavorite, toggleSakeWant, updateM
                             </button>
                           </div>
                         </div>
-                        {isFav && (
+                        {(isFav || myList.sakeWants.has(sakeKey)) && (
                           <div className="mt-1.5 ml-[58px] relative">
                             <textarea
                               id={`memo-${sakeKey}`}
