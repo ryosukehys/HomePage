@@ -6,13 +6,13 @@ import { getDatabase, ref, set, onValue, remove, off, type DatabaseReference } f
 // Firebase Console → プロジェクトの設定 → マイアプリ から取得した値を入力してください
 // ========================================
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDrMKHJaOZ74irPuVYRji-faCdSlGmlb2E",
+  authDomain: "niigata-sake-no-jin-26.firebaseapp.com",
+  databaseURL: "https://niigata-sake-no-jin-26-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "niigata-sake-no-jin-26",
+  storageBucket: "niigata-sake-no-jin-26.firebasestorage.app",
+  messagingSenderId: "482488531672",
+  appId: "1:482488531672:web:e0fbb4e410f304a2b3f5ad"
 };
 
 const app = initializeApp(firebaseConfig);
